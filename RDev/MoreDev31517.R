@@ -38,10 +38,10 @@ close(fileConn)
 
 sink("output.htm")                     # Begin writing output to file
 cat('<table style="width:50%">')
-cat("<tr>")
-cat(paste("<th>",outdata$Symbol,'</th><th align="right">', round(outdata$Close, 2), "</th></tr>", sep="  "))
+#cat("<tr>")
+cat(paste('<tr ',ifelse(outdata$Change >0,'bgcolor="lightgreen">','>'), '<th>',outdata$Symbol,'</th><th align="right">', round(outdata$Close, 2), "</th></tr>", sep="  "))
 cat("</table>")
-sink()   
+sink()  
 
 
 paste(outdata$Symbol, round(outdata$Close, 2), "<BR>", sep = "  ")
