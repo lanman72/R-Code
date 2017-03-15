@@ -1,0 +1,14 @@
+TICKER,TICKERNAME,OPTIONALBLE
+^VIX,VIX (Volititility Index),Y
+TVIX,VIX 2X,N
+TLT,20+ Treas,Y
+TLO,CS LT Tres,Y
+^GSPC,S&P 500,Y
+^OEX,S&P 100,Y
+^IXIC,NASDAQ,Y
+^NDX,NASDAQ 100,Y
+^RUT,Russell 2000 Index,Y
+^GVZ,Gold Volitility Indx,N
+^XAU,Gold/Silver Sector,Y
+^SOX,Semiconductor,Y
+XLU,Utilities Sect SPDR ETF,Y

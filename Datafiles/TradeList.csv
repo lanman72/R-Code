@@ -1,0 +1,22 @@
+TICKER,TICKERNAME,OPTIONALBLE
+^VIX,VIX Volitility IDX,Y
+TVIX,VIX Short-term 2x,N
+^GSPC,SP 500,Y
+UPRO,S&P 500 3x Bull,Y
+SPXU,S&P 500 3x Bear,Y
+^IXIC,NASDAQ,N
+QQQ,NASDAQ ETF,Y
+TQQQ,NASDAQ 3x Bull,Y
+SQQQ,NASDAQ 3x Bear,Y
+FAS,Finacials 3x Bull,Y
+FAZ,Finacials 3x Bear,Y
+^RUT,Russell 2000 Index,Y
+IWM,Russell 2000 ETF,Y
+TNA,Small Caps 3x Bull,Y
+TZA,Small Caps 3x Bear,Y
+GLD,Gold ETF,Y
+NUGT,Gold 3x Bull,Y
+DUST,Gold 3x Bear,Y
+TMF,20+ Tres 3x Bull,Y
+TMV,20+ Tres 3x Bear,Y
+PCLN,Priceline,Y
