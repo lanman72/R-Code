@@ -122,7 +122,7 @@ cat('</DOCTYPE html>
     <link rel="stylesheet" type="text/css" href="TradeSummmary.css">
     </head>
     
-    <body><table style="width:100%">')
+   <body> Run time:', format(Sys.time(), "%m/%d/%Y %H:%M:%S"), '<table style="width:100%">')
 #Write column Headers
 cat(paste('<tr>', '<th> Ticker </th>
           <th> Name </th>
