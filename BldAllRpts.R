@@ -64,15 +64,17 @@ if(vBullDt > vBearDt & abs(as.Date(Sys.Date()) - as.Date(vBullDt)) <= 3) TradeSu
 if(vBearDt > vBullDt & abs(as.Date(Sys.Date()) - as.Date(vBearDt)) <= 6) TradeSum[ticker,"htmlrowcol"] <-'<tr class="bearwk">'
 if(vBearDt > vBullDt & abs(as.Date(Sys.Date()) - as.Date(vBearDt)) <= 3) TradeSum[ticker,"htmlrowcol"] <-'<tr class="bearst">'
 
+
+
 TradeSum[ticker, "Close"] <- sdat[nrow(sdat), c("Close")]
 
 if (sdat[nrow(sdat),"Longsig"] > 0) TradeSum[ticker,"Action"] <- "Bullish/Buy/Call"
 if (sdat[nrow(sdat),"Shortsig"] > 0) TradeSum[ticker,"Action"] <- "Bearish/Short/Put" 
 
-if (sdat[vBullDt,"Longsig"] > 0) {  TradeSum[ticker,"LastBuySig"] <- as.character.Date(vBullDt, "%m/%d/%Y")
+if (sdat[vBullDt,"Longsig"] > 0) {  TradeSum[ticker,"LastBuySig"] <- as.character.Date(index(sdat[vBullDt,]), "%m/%d/%Y")
                                     TradeSum[ticker,"LBClose"] <- sdat[vBullDt, c("Close")]
                                     TradeSum[ticker,"LBATR"] <- sdat[vBullDt, c("atr")]
-                                    TradeSum[ticker,"LastSellSig"] <- as.character.Date(vBearDt, "%m/%d/%Y")
+                                    TradeSum[ticker,"LastSellSig"] <- as.character.Date(index(sdat[vBearDt,]), "%m/%d/%Y")
                                     TradeSum[ticker,"LSClose"] <- sdat[vBearDt, c("Close")]
                                     TradeSum[ticker,"LSATR"] <- sdat[vBearDt, c("atr")]
                                     TradeSum[ticker,"ATR"] <- sdat[nrow(sdat)-1, c("atr")]
@@ -119,36 +121,48 @@ cat('</DOCTYPE html>
 <html>
     <head>
     <title>Trading Summary Report </title>
-    <link rel="stylesheet" type="text/css" href="TradeSummmary.css">
+    <link rel="stylesheet" type="text/css" href="TradeSummary.css">
     </head>
     
-   <body> Run time:', format(Sys.time(), "%m/%d/%Y %H:%M:%S"), '<table style="width:100%">')
+    <body> Run time:', format(Sys.time(), "%m/%d/%Y %H:%M:%S"), '<table style="width:100%">')
 #Write column Headers
-cat(paste('<tr>', '<th> Ticker </th>
+cat(paste('<tr style="font-size:1em">  <th> </th>
+          <th>  </th>
+          <th colspan ="2"> Current </th>
+          <th colspan="3"> Last Buy Signal</th>
+          <th colspan="3"> Last Sell Signal</th>
+          <th> Trail </th>
+          <th colspan="2"> Prof Exit</th>
+          <th colspan="3"> Stop Loss Options (Long Term)  </th>
+          <th colspan="3"> Stop Loss Options(Short Term)  </th>
+          </tr>', sep="  " ) )
+
+cat(paste('<trstyle="font-size:1em">  <th> Symbol </th>
           <th> Name </th>
-          <th> Current <br> Close </th>
-          <th> Last Buy <br> Signal Date </th>
-          <th> Last Buy <br> Close </th>
-          <th> Last Buy <br> ATR </th>
-          <th> Last Sell <br> Signal Date </th>
-          <th> Last Sell <br> Close </th>
-          <th> Last Sell <br>ATR </th>
-          <th> Trail<BR>Stop Loss </th>
-          <th> Prof Exit<BR> (Short Term) </th>
-          <th> Prof Exit<BR> (Long Term) </th>
-          <th> Stop Loss <BR> Option (Long Term) <BR> &Delta; 30 </th>
-          <th> Stop Loss <BR> Option (Long Term) <BR> &Delta; 40 </th>
-          <th> Stop Loss <BR> Option (Long Term) <BR> &Delta; 45 </th>
-          <th> Stop Loss <BR> Option (Short Term) <BR> &Delta; 30 </th>
-          <th> Stop Loss <BR> Option (Short Term) <BR> &Delta; 40 </th>
-          <th> Stop Loss <BR> Option (Short Term) <BR> &Delta; 45 </th>
+          <th> Close </th>
           <th> ATR </th>
+          <th> Date </th>
+          <th> Close </th>
+          <th> ATR </th>
+          <th> Signal Date </th>
+          <th> Close </th>
+          <th> ATR </th>
+          <th> Stop Loss </th>
+          <th> (Short Term) </th>
+          <th> (Long Term) </th>
+          <th> &Delta; 30 </th>
+          <th> &Delta; 40 </th>
+          <th> &Delta; 45 </th>
+          <th> &Delta; 30 </th>
+          <th> &Delta; 40 </th>
+          <th> &Delta; 45 </th>
           </tr>', sep="  " ) )
 
 ### write each record to a sperate table row (th, with TH Column)
 cat(paste(TradeSum$htmlrowcol, '<td>',row.names(TradeSum),'</td>
           <td align="left">', TradeSum$TICKERNAME, '</td>
           <td align="right">', format(round(TradeSum$Close, 2), nsmall = 2, big.mark = ","), '</td>
+          <td align="right">', format(round(TradeSum$ATR, 2), nsmall = 2, big.mark = ","), '</td>
           <td align="right">', TradeSum$LastBuySig, '</td>
           <td align="right">', format(round(TradeSum$LBClose, 2), nsmall = 2, big.mark = ","), '</td>
           <td align="right">', format(round(TradeSum$LBATR, 2), nsmall = 2, big.mark = ","), '</td>
@@ -164,7 +178,6 @@ cat(paste(TradeSum$htmlrowcol, '<td>',row.names(TradeSum),'</td>
           <td align="right">', format(round(TradeSum$STOptSL30D, 2), nsmall = 2, big.mark = ","), '</td>
           <td align="right">', format(round(TradeSum$STOptSL40D, 2), nsmall = 2, big.mark = ","), '</td>
           <td align="right">', format(round(TradeSum$STOptSL45D, 2), nsmall = 2, big.mark = ","), '</td>
-          <td align="right">', format(round(TradeSum$ATR, 2), nsmall = 2, big.mark = ","), '</td>
           </tr>', sep="  " ) )
 cat('</table>  </body>')
 sink()   
