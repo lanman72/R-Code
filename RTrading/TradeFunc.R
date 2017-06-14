@@ -1,38 +1,5 @@
 library(TTR)
 library(xts)
-#library(sendmailR)
-#library(mailR)
-
-
-#emailme <- function(subtxt, btxt, attch = NULL) {
-#		sender <- "@gmail.com"  # Replace with a valid address
-#		recipients <- c("<@gmail.com>")  # Replace with one or more valid addresses
-#		email <- send.mail(from = sender,
-#           		       to = recipients,
-#		                   subject=subtxt,
-#           		       body = btxt,
-#		                   smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "l@gmail.com", passwd = "", ssl = TRUE),
-#           		       authenticate = TRUE,
-#		                   attach.files = attch,
-#		                   send = TRUE,
-#           		       debug = FALSE)
-#}
-#
-#textme <- function(subtxt, btxt, attch = NULL) {
-#		sender <- "@gmail.com"  # Replace with a valid address
-#		recipients <- c("<9991231234@vtext.com>")  # Replace with one or more valid addresses
-#		email <- send.mail(from = sender,
-#           		       to = recipients,
-#		                   subject=subtxt,
-#           		       body = btxt,
-#		                   smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "l@gmail.com", passwd = "", ssl = TRUE),
-#           		       authenticate = TRUE,
-#		                   attach.files = attch,
-#		                   send = TRUE,
-#           		       debug = FALSE)
-#}
-
-
 
 # Get Quote data
 getQuote <- function(symbol, mType="Hist", verbose = FALSE) {
@@ -62,31 +29,36 @@ getQuote <- function(symbol, mType="Hist", verbose = FALSE) {
 
 
 getHistDat <- function(symbol, n) {
-  hurl <- paste("http://ichart.finance.yahoo.com/table.csv?s=", symbol, "&ignore=.csv")
-  hdat <- read.table(hurl, header = TRUE, sep = ",")
-  adjFactor <- hdat[,"Adj.Close"] / hdat[,"Close"]
-  hdat[, "Open"] <- hdat[, "Open"] * adjFactor
-  hdat[, "High"] <- hdat[, "High"] * adjFactor
-  hdat[, "Low"] <- hdat[, "Low"] * adjFactor
-  hdat[, "Close"] <- hdat[, "Close"] * adjFactor
-  hdat <- hdat[, c("Date", "Open", "High", "Low", "Close", "Volume")]
+  hdat <- getSymbols(symbol, src = "google", env = NULL, auto.assign = FALSE, warning=FALSE)
+  colnames(hdat)<-(c("Open", "High", "Low", "Close", "Volume"))
+  
+#  hurl <- paste("http://ichart.finance.yahoo.com/table.csv?s=", symbol, "&ignore=.csv")
+#  hdat <- read.table(hurl, header = TRUE, sep = ",")
+#  adjFactor <- hdat[,"Adj.Close"] / hdat[,"Close"]
+#  hdat[, "Open"] <- hdat[, "Open"] * adjFactor
+#  hdat[, "High"] <- hdat[, "High"] * adjFactor
+#  hdat[, "Low"] <- hdat[, "Low"] * adjFactor
+#  hdat[, "Close"] <- hdat[, "Close"] * adjFactor
+#  hdat <- hdat[, c("Date", "Open", "High", "Low", "Close", "Volume")]
   return(hdat)
   
 }
 
 getQH <- function(symbol,n) {
   Histdat = getHistDat(symbol, 10)
+  Histdat <- na.omit(Histdat)
   Qdat = getQuote(symbol,10)
   # Check for num of rows to return is not greater than data available
   if (nrow(Histdat) < n) {n <- nrow(Histdat)-1 }
   if (n==0) {n <- nrow(Histdat)-1 }
   
-  Histdat = Histdat[1:n,]
-  if (as.character(as.Date(Histdat[1,"Date"])) != Qdat[1,"Date"]) {
-    Histdat <- rbind(Histdat,Qdat)
-  }
-  Histsdat <- Histdat[order(Histdat[,"Date"]),]
-  Histdat <- xts(Histdat[, -1], as.Date(as.character(Histdat[,"Date"])))
+#  Histdat = Histdat[1:n,]
+  Histdat <- Histdat[paste(as.character.Date(Sys.Date()-n),"/", sep = "")]
+#  if (as.character(as.Date(Histdat[1,"Date"])) != Qdat[1,"Date"]) {
+#    Histdat <- rbind(Histdat,Qdat)
+#  }
+#  Histsdat <- Histdat[order(Histdat[,"Date"]),]
+#  Histdat <- xts(Histdat[, -1], as.Date(as.character(Histdat[,"Date"])))
 }
 
 MACDCalc <- function(x, short = 12, long = 26, sgnl = 9) {
@@ -145,7 +117,7 @@ getsdat <- function(symbol, n=0) {
   sdat$EMA20 <- round(EMA(sdat[,"Close"], 20), 3)
   sdat$EMA50 <- round(EMA(sdat[,"Close"], 50), 3)
   sdat$EMA100 <- round(EMA(sdat[,"Close"], 100), 3)
-  sdat$EMA100 <- round(EMA(sdat[,"Close"], 200), 3)
+  sdat$EMA200 <- round(EMA(sdat[,"Close"], 200), 3)
   
   #RSI14
   sdat$RSI14 <- round(RSI(sdat[,"Close"], n=14, maType="EMA"), 3)
@@ -272,7 +244,7 @@ getsdat <- function(symbol, n=0) {
 }
 
 buildCharts <- function(n = 180) {
-  #Assign date and Data from repor
+  #Assign date and Data from report
   cdate <- paste("as of:", qdat$Date, qdat$Time)
   cdat <- as.table(sdat[nrow(sdat),])
   
@@ -443,3 +415,4 @@ buildCharts <- function(n = 180) {
   #  mtext("ADX", line=0, adj=.55, cex=.5, col="royalblue")
   
 }
+
